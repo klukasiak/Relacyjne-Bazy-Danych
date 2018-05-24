@@ -60,5 +60,52 @@ CREATE FUNCTION dbo.ile_wypozyczen (
 --DROP FUNCTION dbo.roznica_pensji
 CREATE FUNCTION dbo.roznica_pensji () RETURNS INT
 BEGIN
-RETURN(SELECT MAX(pensja) FROM pracownik SELECT MIN(pensja) FROM pracownik)
+RETURN(SELECT TOP 1 pensja FROM pracownik ORDER BY pensja DESC)-
+(SELECT TOP 1 pensja FROM pracownik ORDER BY pensja ASC)
 END;
+
+GO
+--34.1 
+--DROP VIEW klient_raport;
+--GO
+CREATE VIEW klient_raport
+AS
+SELECT k.id_klient, k.imie, k.nazwisko, COUNT(w.id_klient) AS "ilosc_wyp"
+FROM klient k LEFT JOIN wypozyczenie w ON k.id_klient=w.id_klient
+GROUP BY k.id_klient, k.imie, k.nazwisko;
+GO
+SELECT * FROM klient_raport WHERE ilosc_wyp>1; 
+
+GO
+
+--34.2
+--DROP VIEW samochod_raport
+--GO
+CREATE VIEW samochod_raport
+AS
+SELECT s.id_samochod, s.marka, s.typ, COUNT(w.id_samochod) AS "ilosc_wyp"
+FROM samochod s LEFT JOIN wypozyczenie w ON s.id_samochod = w.id_samochod
+GROUP BY s.id_samochod, s.marka, s.typ;
+GO
+
+SELECT TOP 1 WITH TIES * FROM samochod_raport ORDER BY ilosc_wyp;
+GO
+
+--35.1
+--DROP INDEX klient.index_klient_telefon;
+--GO
+CREATE UNIQUE INDEX index_klient_telefon ON klient(telefon);
+GO 
+
+--35.2
+--DROP INDEX klient.index_klient_dane
+--GO
+CREATE UNIQUE CLUSTERED INDEX index_klient_dane
+ON klient(imie, nazwisko);
+GO
+
+--35.3
+--DROP INDEX samochod.index_samochod_dane
+--GO
+CREATE NONCLUSTERED INDEX index_samochod_dane
+ON samochod(marka, typ)
