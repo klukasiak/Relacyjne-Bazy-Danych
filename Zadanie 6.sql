@@ -39,7 +39,24 @@ RETURN (SELECT COUNT(*) FROM wypozyczenie
  WHERE id_klient=@id_klient)
 END;
 GO
-SELECT dbo.aktywnosc_klienta(3) AS ile_wyp; GO--33.2--DROP FUNCTION dbo.ile_wypozyczen;--GOCREATE FUNCTION dbo.ile_wypozyczen ( @data_od DATE, @data_do DATE) RETURNS INT BEGIN RETURN(SELECT COUNT(*) FROM wypozyczenie WHERE data_wyp BETWEEN @data_od AND @data_do) END; GO SELECT dbo.ile_wypozyczen('01/01/2000', '31-12-2000'); GO--33.3
+SELECT dbo.aktywnosc_klienta(3) AS ile_wyp; 
+
+GO
+
+--33.2
+--DROP FUNCTION dbo.ile_wypozyczen;
+--GO
+CREATE FUNCTION dbo.ile_wypozyczen (
+ @data_od DATE, @data_do DATE) RETURNS INT
+ BEGIN
+ RETURN(SELECT COUNT(*) FROM wypozyczenie WHERE data_wyp BETWEEN @data_od AND @data_do)
+ END;
+ GO
+ SELECT dbo.ile_wypozyczen('01/01/2000', '31-12-2000');
+
+ GO
+
+--33.3
 --DROP FUNCTION dbo.roznica_pensji
 CREATE FUNCTION dbo.roznica_pensji () RETURNS INT
 BEGIN
